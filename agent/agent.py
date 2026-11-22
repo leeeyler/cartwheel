@@ -452,7 +452,8 @@ _COMMON_TOOLS = [
     issue_refund,
     cancel_order,
     escalate_to_human,
-    get_store_info,
+    # HW1 baseline: get_store_info remains implemented but is not offered to
+    # the model until the student confirms a gap in observed conversations.
 ]
 TOOLS_BY_ROLE = {
     "shopper": _COMMON_TOOLS + [list_my_orders, find_order],
