@@ -1,0 +1,13 @@
+{
+  "name": "Cartwheel HW1",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
+  "forwardPorts": [8011],
+  "portsAttributes": {
+    "8011": {"label": "Cartwheel workbench", "onAutoForward": "openBrowser"}
+  },
+  "secrets": {
+    "OPENAI_API_KEY": {"description": "Model API key for live Cartwheel conversations. Stored as a Codespaces secret."}
+  },
+  "postCreateCommand": "python -m pip install --user uv && python -m uv sync && python .devcontainer/prepare-data.py",
+  "postStartCommand": "bash .devcontainer/start-workbench.sh"
+}
