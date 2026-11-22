@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="Explore your Cartwheel support agent, inspect its tool calls, and record your own evaluation.">
+  <title>Cartwheel | HW1 workbench</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#request">Skip to conversation</a>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="/" aria-label="Cartwheel home"><span class="brand-mark" aria-hidden="true">c</span><span>Cartwheel<span class="brand-caption">Agent workbench</span></span></a>
+      <nav aria-label="Workbench resources">
+        <a href="/api/spec" target="_blank" rel="noopener">Specification</a>
+        <button class="text-button" id="open-guide" type="button">Quick guide</button>
+        <a class="button button-secondary download-link" id="download-records" href="/api/records/download" aria-disabled="true">Download records</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="intro" aria-labelledby="page-title">
+      <div><p class="eyebrow">HOMEWORK 1 · EXPLORE &amp; EVALUATE</p><h1 id="page-title">See how your agent behaves.</h1><p class="intro-copy">Ask a question. Inspect the evidence. Make your assessment.</p></div>
+      <div class="progress-card" aria-label="Recorded conversations"><span class="progress-number"><strong id="saved-count">0</strong><span>/ 10</span></span><span>conversations saved</span><progress id="saved-progress" value="0" max="10" aria-label="Progress toward ten recorded conversations"></progress></div>
+    </section>
+
+    <section class="setup-banner" id="setup-banner" aria-live="polite">
+      <div class="banner-icon" aria-hidden="true">i</div><div class="banner-copy"><strong id="setup-title">Checking your setup</strong><p id="setup-message">Connecting to the local workbench.</p></div><button type="button" class="button button-secondary" id="refresh-status">Check again</button>
+    </section>
+
+    <div class="workspace">
+      <section class="conversation-column" aria-label="Conversation workspace">
+        <div class="case-controls card">
+          <div class="field"><label for="identity">Test identity</label><div class="select-wrap"><select id="identity" aria-describedby="identity-help"><option value="shopper:1">Shopper · User 1</option><option value="merchant:9002">Merchant · Store 2</option><option value="support:9501">Support · User 9501</option></select></div><p class="field-help" id="identity-help">The server verifies this identity before running any tools.</p></div>
+          <div class="field"><label for="case">Starting case</label><div class="select-wrap"><select id="case"><option value="custom">Write your own request</option><option value="authorized">Authorized order lookup</option><option value="expired">Outside the refund window</option><option value="approval">Refund above the approval limit</option><option value="permission">Order from another store</option><option value="override">Store-specific policy</option><option value="scope">Outside the agent's scope</option><option value="account">Account email change</option></select></div><p class="field-help">Seven starting cases. Design three more, including support.</p></div>
+        </div>
+
+        <div class="conversation-card card">
+          <div class="card-heading conversation-heading"><div><h2>Conversation</h2><p id="conversation-caption">A fresh case starts from the same course data.</p></div><button class="button button-secondary button-small" id="new-conversation" type="button">New conversation</button></div>
+          <div class="chat-log" id="chat-log" role="log" aria-label="Conversation messages" aria-live="polite" aria-relevant="additions"></div>
+          <div class="request-area">
+            <div class="expectation-field"><label for="expected">What should happen?</label><textarea id="expected" rows="2" placeholder="Write the behavior you expect from the specification." maxlength="6000"></textarea><p class="field-help">Your expectation stays in the evaluation record. The agent only receives your question.</p></div>
+            <form id="message-form" class="composer">
+              <label class="sr-only" for="request">Message to Cartwheel</label><textarea id="request" rows="3" placeholder="Ask Cartwheel about an order, a product, or a policy…" maxlength="12000" required></textarea>
+              <div class="composer-footer"><span id="composer-hint">Ctrl / ⌘ + Enter to send</span><button class="button button-primary" id="send-message" type="submit" disabled><span id="send-label">Send message</span><span class="spinner" id="send-spinner" hidden aria-hidden="true"></span></button></div>
+            </form>
+            <div id="request-error" class="inline-alert" role="alert" hidden></div>
+          </div>
+        </div>
+        <div class="runtime-details"><span id="model-label">Model: checking…</span><span id="prompt-label"></span><span class="runtime-note">Real responses from the course agent</span></div>
+      </section>
+
+      <aside class="review-column" aria-label="Evidence and evaluation">
+        <section class="card evidence-card">
+          <div class="card-heading"><div><p class="section-kicker">INSPECT</p><h2>Tool activity</h2></div><span class="count-badge" id="tool-count">0</span></div>
+          <div id="tool-evidence" class="tool-evidence"><div class="evidence-empty"><span class="evidence-glyph" aria-hidden="true">⌘</span><p>The agent's actions appear here.</p><span>Inspect each tool's inputs and results before deciding how the conversation went.</span></div></div>
+        </section>
+
+        <section class="card assessment-card">
+          <div class="card-heading"><div><p class="section-kicker">EVALUATE</p><h2>Your assessment</h2></div><span class="saved-chip" id="saved-chip" hidden>Saved</span></div>
+          <form id="assessment-form" class="assessment-form">
+            <div class="field"><label for="requirement">Relevant requirement</label><div class="select-wrap"><select id="requirement"><option value="">No single requirement</option></select></div><p class="field-help" id="requirement-help">Choose the rule you used to judge this conversation.</p></div>
+            <fieldset class="judgement-fieldset"><legend>Did the agent meet the requirement?</legend><div class="judgement-options"><label class="judgement-option"><input type="radio" name="judgement" value="pass"><span><strong>Met</strong><span>Expected behavior</span></span></label><label class="judgement-option"><input type="radio" name="judgement" value="fail"><span><strong>Missed</strong><span>Something went wrong</span></span></label></div></fieldset>
+            <div class="field" id="failure-field" hidden><label for="problem-source">Where did the problem come from?</label><div class="select-wrap"><select id="problem-source"><option value="">Select a source</option><option value="prompt">Prompt / model decision</option><option value="tool">Tool implementation</option><option value="specification">Unclear specification</option></select></div><p class="field-help" id="problem-help">Use the tool evidence and specification to make your call.</p></div>
+            <button class="button button-primary save-button" id="save-record" type="submit" disabled>Save conversation</button>
+            <p class="save-help" id="save-help">Send a request, inspect the response, then make your assessment.</p>
+            <p id="save-error" class="inline-alert" role="alert" hidden></p>
+            <p id="save-success" class="save-success" role="status" hidden></p>
+          </form>
+        </section>
+        <p class="workbench-footnote">Saved records stay on the computer running Cartwheel. Download them for your homework submission.</p>
+      </aside>
+    </div>
+  </main>
+
+  <dialog id="guide-dialog" aria-labelledby="guide-title">
+    <div class="dialog-heading"><div><p class="section-kicker">START HERE</p><h2 id="guide-title">Your first conversation</h2></div><button class="icon-button" id="close-guide" type="button" aria-label="Close guide">×</button></div>
+    <ol class="guide-steps"><li><strong>Choose an identity and a case.</strong><span>Shopper 1 owns the three course orders. Merchant 9002 belongs to store 2. Support 9501 can inspect orders across stores.</span></li><li><strong>Predict what should happen.</strong><span>Use the specification to write your expectation. This note is kept outside the agent's input.</span></li><li><strong>Ask, then inspect.</strong><span>Read the response and expand the tool results. Follow-up questions stay in the same conversation.</span></li><li><strong>Make your assessment and save.</strong><span>Choose Met or Missed. For a miss, identify the source. Saving freezes this record; start a new conversation for your next case.</span></li></ol>
+    <div class="guide-note"><strong>Each new conversation starts fresh.</strong><p>Your backend gives it a copy of the seeded course data. Actions within a conversation keep their effects for follow-up questions.</p></div>
+    <details class="setup-details"><summary>Finish the local setup</summary><p>From the repository folder, install the project and create its fictional data:</p><pre><code>uv sync
+uv run python -m seed.generate</code></pre><p>Copy <code>.env.example</code> to <code>.env</code> if needed. Add your model provider's API key there, then restart the workbench. Keep the key in that local file.</p><p class="field-help">The app remains available to explore before a key is configured. Live questions become available when the server can call the model.</p></details>
+    <div class="dialog-footer"><a href="/api/spec" target="_blank" rel="noopener">Read the specification</a><button id="guide-done" class="button button-primary" type="button">Got it</button></div>
+  </dialog>
+</body>
+</html>
