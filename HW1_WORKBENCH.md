@@ -103,7 +103,7 @@ For each conversation, write the expected behavior yourself before sending the f
 - [ ] I know which identity is active and how it changes access to orders.
 - [ ] I can trace a request through tool arguments, tool results, and the final answer.
 - [ ] I can distinguish a model decision problem from an implementation problem or an unclear requirement.
-- [ ] I tried the added `get_store_info` capability and checked its public store details, return-window override, and policy identifiers.
+- [ ] I reviewed whether a missing capability justifies enabling the prebuilt `get_store_info` tool and, if enabled, tested its public store details, return-window override, and policy identifiers.
 - [ ] I understand that a successful offline tool test does not establish how the model will use that tool.
 - [ ] I downloaded my records and confirmed that they contain my requests, actual responses, actual tool evidence, and my judgments.
 - [ ] I can explain at least one conversation in detail without relying on the implementation notes.
@@ -125,7 +125,7 @@ One saved conversation produces one JSONL record. Multi-turn records include the
 | Component | What changed |
 | --- | --- |
 | Five HW1 tools | Completed policy lookup, product search, order listing, cancellation, and order search. |
-| Additional tool | Added `get_store_info` for public store details and policy overrides, with registration for the supported roles. |
+| Additional tool candidate | Implemented `get_store_info` for public store details and policy overrides. It is temporarily **not registered** for model use. Enable it only after reviewing an observed capability gap. |
 | Browser workbench | Added role selection, starting cases, live chat, tool inspection, explicit assessment, saving, and download. |
 | Conversation isolation | Added separate data copies and message history for each workbench conversation. |
 | Local and Codespaces setup | Added launch instructions and dev-container configuration. |
@@ -154,7 +154,7 @@ The remaining work requires observed model behavior and your review:
 
 - [ ] Verify that the configured model API accepts a real request.
 - [ ] Complete and assess at least ten live conversations covering the checklist above.
-- [ ] Review whether the additional tool helps with an observed capability gap.
+- [ ] Identify a capability gap from observed conversations; choose whether to enable `get_store_info` as the additional tool or implement a different one.
 - [ ] Compare a missing or vague prompt instruction with the corresponding specification requirement.
 - [ ] Test that possible omission. If it already works, test another one.
 - [ ] Make a prompt revision only when an observed model failure justifies it. Repeat the same conversation in a new session with the same starting data, and retain the before/after evidence. If no tested omission causes a prompt failure, explain why no edit was justified.
